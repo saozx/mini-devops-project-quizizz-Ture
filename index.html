@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz IT Fun</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FFC107;
+            --background-color: #F0F2F5;
+            --card-background: #FFFFFF;
+            --text-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --correct-color: #4CAF50;
+            --incorrect-color: #F44336;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        #question-box {
+            display: none;
+            text-align: left;
+        }
+
+        #question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            text-align: left;
+            position: relative;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            background-color: #d0d0d0;
+        }
+
+        .option-btn.selected {
+            border: 3px solid var(--secondary-color);
+            box-shadow: 0 0 10px var(--secondary-color);
+        }
+
+        .option-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .quiz-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #start-btn, #next-btn, #show-results-btn, #restart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #start-btn:hover, #next-btn:hover, #show-results-btn:hover, #restart-btn:hover {
+            background-color: #388E3C;
+        }
+        
+        #next-btn, #show-results-btn, #restart-btn {
+            display: none;
+        }
+
+        #score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        #results-box {
+            display: none;
+            text-align: left;
+        }
+
+        .result-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--background-color);
+            transition: background-color 0.3s;
+        }
+
+        .result-item.correct {
+            background-color: #E8F5E9; /* Light green */
+            border-left: 5px solid var(--correct-color);
+        }
+
+        .result-item.incorrect {
+            background-color: #FFEBEE; /* Light red */
+            border-left: 5px solid var(--incorrect-color);
+        }
+
+        .result-item h3 {
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .result-item p {
+            margin: 5px 0;
+        }
+
+        .correct-answer-text {
+            font-weight: bold;
+            color: var(--correct-color);
+        }
+
+        .your-answer-text {
+            font-style: italic;
+            color: var(--incorrect-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 id="title">Quiz IT Fun</h1>
+        
+        <div id="start-screen">
+            <p>ทดสอบความรู้เกี่ยวกับอุปกรณ์ IT ของคุณ!</p>
+            <button id="start-btn">เริ่มทำแบบทดสอบ</button>
+        </div>
+
+        <div id="question-box">
+            <h2 id="question"></h2>
+            <div class="options-grid" id="options-container"></div>
+            <div class="quiz-footer">
+                <span id="score-display">คะแนน: 0/0</span>
+                <button id="next-btn">ข้อต่อไป</button>
+                <button id="show-results-btn">ดูผลลัพธ์</button>
+            </div>
+        </div>
+
+        <div id="results-box">
+            <h2>ผลลัพธ์ของคุณ</h2>
+            <p id="final-score"></p>
+            <div id="answers-summary"></div>
+            <button id="restart-btn">ทำแบบทดสอบอีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "คำถามข้อที่ 1. แรมมีหน้าที่อะไร",
+                options: [
+                    "A. เก็บข้อมูลแบบถาวรแม้ปิดเครื่อง",
+                    "B. ประมวลผลคำสั่งและข้อมูล",
+                    "C. จัดเก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว",
+                    "D. ใช้ในการเชื่อมต่ออินเทอร์เน็ต"
+                ],
+                answer: "C. จัดเก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว"
+            },
+            {
+                question: "คำถามข้อที่ 2. คีย์บอร์ด มีหน้าที่อะไร",
+                options: [
+                    "A. แสดงผลข้อมูลออกมาในรูปแบบภาพ",
+                    "B. รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์",
+                    "C. ประมวลผลข้อมูลให้คอมพิวเตอร์ทำงาน",
+                    "D. จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
+                ],
+                answer: "B. รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์"
+            },
+            {
+                question: "คำถามข้อที่ 3. เม้าส์ มีหน้าที่อะไร",
+                options: [
+                    "A. ประมวลผลข้อมูลและคำสั่ง",
+                    "B. แสดงผลภาพและเสียง",
+                    "C. รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ",
+                    "D. จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
+                ],
+                answer: "C. รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ"
+            },
+            {
+                question: "คำถามข้อที่ 4. ลำโพง มีหน้าที่อะไร",
+                options: [
+                    "A. แสดงผลข้อมูลในรูปแบบเสียง",
+                    "B. ประมวลผลข้อมูลและคำสั่ง",
+                    "C. รับข้อมูลจากผู้ใช้เข้าสู่คอมพิวเตอร์",
+                    "D. จัดเก็บข้อมูลแบบถาวร"
+                ],
+                answer: "A. แสดงผลข้อมูลในรูปแบบเสียง"
+            },
+            {
+                question: "คำถามข้อที่ 5. CPU มีหน้าที่อะไร",
+                options: [
+                    "A. เก็บข้อมูลถาวรเพื่อให้คอมพิวเตอร์ใช้งาน",
+                    "B. ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์",
+                    "C. แสดงผลข้อมูลออกมาเป็นภาพและเสียง",
+                    "D. รับข้อมูลจากผู้ใช้เข้าสู่ระบบ"
+                ],
+                answer: "B. ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const showResultsBtn = document.getElementById('show-results-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const startScreen = document.getElementById('start-screen');
+        const questionBox = document.getElementById('question-box');
+        const resultsBox = document.getElementById('results-box');
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreElement = document.getElementById('final-score');
+        const answersSummaryElement = document.getElementById('answers-summary');
+
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            }
+        });
+        showResultsBtn.addEventListener('click', showResults);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        function startQuiz() {
+            startScreen.style.display = 'none';
+            questionBox.style.display = 'block';
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            showQuestion();
+            updateScoreDisplay();
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.classList.add('option-btn');
+                
+                const label = ['A', 'B', 'C', 'D'][index];
+                optionBtn.innerHTML = `<span class="option-label">${label}.</span> ${option.substring(3)}`;
+                
+                optionBtn.addEventListener('click', () => selectOption(option, optionBtn));
+                optionsContainer.appendChild(optionBtn);
+            });
+            nextBtn.style.display = 'none';
+            showResultsBtn.style.display = 'none';
+        }
+
+        function selectOption(selectedOption, selectedBtn) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+            
+            userAnswers[currentQuestionIndex] = {
+                question: currentQuestion.question,
+                selected: selectedOption,
+                isCorrect: isCorrect,
+                correctAnswer: currentQuestion.answer
+            };
+
+            if (isCorrect) {
+                score++;
+            }
+            
+            // Disable all option buttons after selection
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn === selectedBtn) {
+                    btn.classList.add('selected');
+                }
+            });
+
+            updateScoreDisplay();
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                nextBtn.style.display = 'block';
+            } else {
+                showResultsBtn.style.display = 'block';
+            }
+        }
+        
+        function updateScoreDisplay() {
+            scoreDisplay.innerText = `คะแนน: ${score}/${questions.length}`;
+        }
+
+        function showResults() {
+            questionBox.style.display = 'none';
+            resultsBox.style.display = 'block';
+            
+            finalScoreElement.innerText = `คุณตอบถูก ${score} ข้อ จากทั้งหมด ${questions.length} ข้อ`;
+            answersSummaryElement.innerHTML = '';
+
+            userAnswers.forEach((answer, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.classList.add(answer.isCorrect ? 'correct' : 'incorrect');
+
+                resultItem.innerHTML = `
+                    <h3>คำถามที่ ${index + 1}: ${questions[index].question.substring(13)}</h3>
+                    <p><b>คำตอบของคุณ:</b> ${answer.selected}</p>
+                    <p class="correct-answer-text"><b>คำตอบที่ถูกต้อง:</b> ${answer.correctAnswer}</p>
+                `;
+                answersSummaryElement.appendChild(resultItem);
+            });
+        }
+
+        function restartQuiz() {
+            resultsBox.style.display = 'none';
+            startScreen.style.display = 'block';
+            document.getElementById('title').scrollIntoView({ behavior: 'smooth' });
+        }
+
+    </script>
+</body>
+</html>
