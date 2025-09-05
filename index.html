@@ -70,12 +70,11 @@
             padding: 20px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: transform 0.2s, background-color 0.2s, border 0.2s, box-shadow 0.2s;
             text-align: left;
-            position: relative;
         }
 
-        .option-btn:hover {
+        .option-btn:hover:not(.selected) {
             transform: translateY(-5px);
             background-color: #d0d0d0;
         }
@@ -83,14 +82,12 @@
         .option-btn.selected {
             border: 3px solid var(--secondary-color);
             box-shadow: 0 0 10px var(--secondary-color);
+            background-color: #ffe082; /* Lighter yellow for selected state */
         }
-
-        .option-label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-weight: bold;
-            font-size: 1.2em;
+        
+        .option-btn.disabled {
+            pointer-events: none; /* Disable clicking */
+            opacity: 0.7;
         }
 
         .quiz-footer {
@@ -115,8 +112,8 @@
             background-color: #388E3C;
         }
         
-        #next-btn, #show-results-btn, #restart-btn {
-            display: none;
+        #next-btn, #show-results-btn {
+            display: none; /* Hidden by default, shown when an option is selected */
         }
 
         #score-display {
@@ -200,58 +197,59 @@
             {
                 question: "คำถามข้อที่ 1. แรมมีหน้าที่อะไร",
                 options: [
-                    "A. เก็บข้อมูลแบบถาวรแม้ปิดเครื่อง",
-                    "B. ประมวลผลคำสั่งและข้อมูล",
-                    "C. จัดเก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว",
-                    "D. ใช้ในการเชื่อมต่ออินเทอร์เน็ต"
+                    "เก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว",
+                    "ประมวลผลคำสั่งและข้อมูล",
+                    "เก็บข้อมูลแบบถาวรแม้ปิดเครื่อง",
+                    "ใช้ในการเชื่อมต่ออินเทอร์เน็ต"
                 ],
-                answer: "C. จัดเก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว"
+                answer: "เก็บข้อมูลชั่วคราวเพื่อให้ CPU เข้าถึงได้รวดเร็ว"
             },
             {
                 question: "คำถามข้อที่ 2. คีย์บอร์ด มีหน้าที่อะไร",
                 options: [
-                    "A. แสดงผลข้อมูลออกมาในรูปแบบภาพ",
-                    "B. รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์",
-                    "C. ประมวลผลข้อมูลให้คอมพิวเตอร์ทำงาน",
-                    "D. จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
+                    "รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์",
+                    "แสดงผลข้อมูลออกมาในรูปแบบภาพ",
+                    "ประมวลผลข้อมูลให้คอมพิวเตอร์ทำงาน",
+                    "จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
                 ],
-                answer: "B. รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์"
+                answer: "รับข้อมูลและคำสั่งจากผู้ใช้เข้าสู่คอมพิวเตอร์"
             },
             {
                 question: "คำถามข้อที่ 3. เม้าส์ มีหน้าที่อะไร",
                 options: [
-                    "A. ประมวลผลข้อมูลและคำสั่ง",
-                    "B. แสดงผลภาพและเสียง",
-                    "C. รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ",
-                    "D. จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
+                    "รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ",
+                    "ประมวลผลข้อมูลและคำสั่ง",
+                    "แสดงผลภาพและเสียง",
+                    "จัดเก็บข้อมูลถาวรในคอมพิวเตอร์"
                 ],
-                answer: "C. รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ"
+                answer: "รับข้อมูลโดยการคลิก เลือก และควบคุมตัวชี้บนหน้าจอ"
             },
             {
                 question: "คำถามข้อที่ 4. ลำโพง มีหน้าที่อะไร",
                 options: [
-                    "A. แสดงผลข้อมูลในรูปแบบเสียง",
-                    "B. ประมวลผลข้อมูลและคำสั่ง",
-                    "C. รับข้อมูลจากผู้ใช้เข้าสู่คอมพิวเตอร์",
-                    "D. จัดเก็บข้อมูลแบบถาวร"
+                    "แสดงผลข้อมูลในรูปแบบเสียง",
+                    "ประมวลผลข้อมูลและคำสั่ง",
+                    "รับข้อมูลจากผู้ใช้เข้าสู่คอมพิวเตอร์",
+                    "จัดเก็บข้อมูลแบบถาวร"
                 ],
-                answer: "A. แสดงผลข้อมูลในรูปแบบเสียง"
+                answer: "แสดงผลข้อมูลในรูปแบบเสียง"
             },
             {
                 question: "คำถามข้อที่ 5. CPU มีหน้าที่อะไร",
                 options: [
-                    "A. เก็บข้อมูลถาวรเพื่อให้คอมพิวเตอร์ใช้งาน",
-                    "B. ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์",
-                    "C. แสดงผลข้อมูลออกมาเป็นภาพและเสียง",
-                    "D. รับข้อมูลจากผู้ใช้เข้าสู่ระบบ"
+                    "ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์",
+                    "เก็บข้อมูลถาวรเพื่อให้คอมพิวเตอร์ใช้งาน",
+                    "แสดงผลข้อมูลออกมาเป็นภาพและเสียง",
+                    "รับข้อมูลจากผู้ใช้เข้าสู่ระบบ"
                 ],
-                answer: "B. ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์"
+                answer: "ประมวลผลและควบคุมการทำงานของคอมพิวเตอร์"
             }
         ];
 
         let currentQuestionIndex = 0;
         let score = 0;
-        let userAnswers = [];
+        let userAnswers = []; // Stores user's selected answer for each question
+        let selectedOptionForCurrentQuestion = null; // Stores the currently selected button for enabling/disabling next button
 
         const startBtn = document.getElementById('start-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -268,12 +266,18 @@
 
         startBtn.addEventListener('click', startQuiz);
         nextBtn.addEventListener('click', () => {
+            // Save the answer before moving to the next question
+            saveAnswer(); 
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 showQuestion();
             }
         });
-        showResultsBtn.addEventListener('click', showResults);
+        showResultsBtn.addEventListener('click', () => {
+            // Save the answer for the last question before showing results
+            saveAnswer(); 
+            showResults();
+        });
         restartBtn.addEventListener('click', restartQuiz);
 
         function startQuiz() {
@@ -281,7 +285,8 @@
             questionBox.style.display = 'block';
             currentQuestionIndex = 0;
             score = 0;
-            userAnswers = [];
+            userAnswers = Array(questions.length).fill(null); // Initialize userAnswers with null for each question
+            selectedOptionForCurrentQuestion = null;
             showQuestion();
             updateScoreDisplay();
         }
@@ -291,50 +296,84 @@
             questionElement.innerText = currentQuestion.question;
             optionsContainer.innerHTML = '';
             
+            selectedOptionForCurrentQuestion = null;
+            nextBtn.style.display = 'none';
+            showResultsBtn.style.display = 'none';
+
             currentQuestion.options.forEach((option, index) => {
                 const optionBtn = document.createElement('button');
                 optionBtn.classList.add('option-btn');
+                optionBtn.innerText = option;
+                optionBtn.dataset.option = option; // Store the option text in a data attribute
                 
-                const label = ['A', 'B', 'C', 'D'][index];
-                optionBtn.innerHTML = `<span class="option-label">${label}.</span> ${option.substring(3)}`;
-                
-                optionBtn.addEventListener('click', () => selectOption(option, optionBtn));
+                optionBtn.addEventListener('click', () => toggleOption(optionBtn));
                 optionsContainer.appendChild(optionBtn);
             });
-            nextBtn.style.display = 'none';
-            showResultsBtn.style.display = 'none';
+
+            // If user previously answered this question, pre-select it
+            if (userAnswers[currentQuestionIndex] !== null) {
+                const prevSelectedOption = userAnswers[currentQuestionIndex].selected;
+                const prevSelectedBtn = Array.from(optionsContainer.children).find(btn => btn.dataset.option === prevSelectedOption);
+                if (prevSelectedBtn) {
+                    prevSelectedBtn.classList.add('selected');
+                    selectedOptionForCurrentQuestion = prevSelectedBtn;
+                    updateNavigationButtons();
+                }
+            }
         }
 
-        function selectOption(selectedOption, selectedBtn) {
+        function toggleOption(clickedBtn) {
+            // If the clicked button is already selected, deselect it
+            if (clickedBtn.classList.contains('selected')) {
+                clickedBtn.classList.remove('selected');
+                selectedOptionForCurrentQuestion = null;
+            } else {
+                // Deselect any other selected button
+                document.querySelectorAll('.option-btn.selected').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                // Select the clicked button
+                clickedBtn.classList.add('selected');
+                selectedOptionForCurrentQuestion = clickedBtn;
+            }
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            if (selectedOptionForCurrentQuestion) {
+                if (currentQuestionIndex < questions.length - 1) {
+                    nextBtn.style.display = 'block';
+                    showResultsBtn.style.display = 'none'; // Ensure showResultsBtn is hidden
+                } else {
+                    nextBtn.style.display = 'none'; // Ensure nextBtn is hidden
+                    showResultsBtn.style.display = 'block';
+                }
+            } else {
+                nextBtn.style.display = 'none';
+                showResultsBtn.style.display = 'none';
+            }
+        }
+
+        function saveAnswer() {
             const currentQuestion = questions[currentQuestionIndex];
-            const isCorrect = selectedOption === currentQuestion.answer;
+            let selectedOptionText = null;
+            let isCorrect = false;
+
+            if (selectedOptionForCurrentQuestion) {
+                selectedOptionText = selectedOptionForCurrentQuestion.dataset.option;
+                isCorrect = (selectedOptionText === currentQuestion.answer);
+            }
             
             userAnswers[currentQuestionIndex] = {
                 question: currentQuestion.question,
-                selected: selectedOption,
+                selected: selectedOptionText,
                 isCorrect: isCorrect,
                 correctAnswer: currentQuestion.answer
             };
-
-            if (isCorrect) {
-                score++;
-            }
             
-            // Disable all option buttons after selection
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.disabled = true;
-                if (btn === selectedBtn) {
-                    btn.classList.add('selected');
-                }
-            });
-
+            // Recalculate score from scratch to ensure accuracy
+            score = userAnswers.filter(answer => answer && answer.isCorrect).length;
             updateScoreDisplay();
-            
-            if (currentQuestionIndex < questions.length - 1) {
-                nextBtn.style.display = 'block';
-            } else {
-                showResultsBtn.style.display = 'block';
-            }
         }
         
         function updateScoreDisplay() {
@@ -349,14 +388,15 @@
             answersSummaryElement.innerHTML = '';
 
             userAnswers.forEach((answer, index) => {
+                const questionData = questions[index];
                 const resultItem = document.createElement('div');
                 resultItem.classList.add('result-item');
-                resultItem.classList.add(answer.isCorrect ? 'correct' : 'incorrect');
+                resultItem.classList.add(answer && answer.isCorrect ? 'correct' : 'incorrect');
 
                 resultItem.innerHTML = `
-                    <h3>คำถามที่ ${index + 1}: ${questions[index].question.substring(13)}</h3>
-                    <p><b>คำตอบของคุณ:</b> ${answer.selected}</p>
-                    <p class="correct-answer-text"><b>คำตอบที่ถูกต้อง:</b> ${answer.correctAnswer}</p>
+                    <h3>${questionData.question}</h3>
+                    <p><b>คำตอบของคุณ:</b> ${answer && answer.selected ? answer.selected : 'ไม่ได้เลือกคำตอบ'}</p>
+                    <p class="correct-answer-text"><b>คำตอบที่ถูกต้อง:</b> ${questionData.answer}</p>
                 `;
                 answersSummaryElement.appendChild(resultItem);
             });
